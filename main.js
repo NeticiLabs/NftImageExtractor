@@ -13,7 +13,6 @@ dotenv.config();
 const config = {
     name: process.env.NAME,
     endPoint: process.env.END_POINT,
-    apiKey: process.env.API_KEY,
     contract: process.env.CONTRACT_ADDRESS,
     fetchMode: process.env.FETCH_MODE,
     tokenCount: utils.isEmpty(process.env.TOKEN_COUNT)?Number.MAX_SAFE_INTEGER:process.env.TOKEN_COUNT,
@@ -24,8 +23,7 @@ const config = {
 let contract;
 async function main(){
     //1. Establish json rpc provider to infura
-    let url = `${config.endPoint}${config.apiKey}`;
-    console.log("connecting to rpc",url)
+    let url = `${config.endPoint}`;
     const provider = new ethers.providers.JsonRpcProvider(url);
     //2. We don't need any private key
     let privateKey = "0x0123456789012345678901234567890123456789012345678901234567890123";
@@ -63,8 +61,7 @@ async function urlsByIds(tokenList, prototype){
 async function urlsByCount(tokenCount, prototype){
     //TODO:UPDATE ABI
     const total = await contract.totalSupply();
-    console.log(total);
-    tokenCount = Math.min(tokenCount, total);
+    tokenCount = Math.min(tokenCount, Number(total));
     let urls = {}
     for (var i=0;i<tokenCount;i++) {
         urls[i] = utils.replace(prototype, i);
@@ -77,6 +74,7 @@ async function downloadImage(urls, tokenId){
     if(img.startsWith('http')){
          fetcher.downloadHttp(tokenId, img, config);
     } else{
+        
     }
 
 }
