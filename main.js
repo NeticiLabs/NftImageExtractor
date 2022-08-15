@@ -6,7 +6,7 @@ import * as fetcher from './utils/download.js';
 
 import { createRequire } from "module"; // Bring in the ability to create the 'require' method
 const require = createRequire(import.meta.url); // construct the require method
-const erc721Abi = require("./abi/erc721.json") // use the require method
+const erc721Abi = require("./abi/Example721.json"); // use the require method
 
 dotenv.config();
 
@@ -32,7 +32,7 @@ async function main(){
     let signer = new ethers.Wallet(privateKey, provider);
     //3. Fetching metadatas
     //Genrate the image urls for other tokens(to avoid too many access to metadata server)
-    contract = new ethers.Contract(config.contract, erc721Abi, signer);
+    contract = new ethers.Contract(config.contract, erc721Abi.abi, signer);
     const prototypeMetadataUri = await contract.tokenURI(0);
     const metadata = await fetcher.getMetadata(prototypeMetadataUri);
     const protoytypeImageUrl = metadata.image;
