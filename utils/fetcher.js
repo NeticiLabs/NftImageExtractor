@@ -8,8 +8,14 @@ let headers= {
 }
 
 async function getMetadata(url) {
+
     let resp =  await utils.tryUntilSucceed(async ()=>{
-        return await axios.get(url, {headers:headers})
+        if (url.startsWith('http')){
+            return await axios.get(url, {headers:headers})
+        } else if(url.startsWith('ipfs')){
+            //TODO:存一个IPFS网关列表，挨个尝试，把文件下载下来
+            throw new Error('Not supported');
+        }
     });
     return resp.data;
 }

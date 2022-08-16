@@ -29,6 +29,7 @@ async function main(){
     //Genrate the image urls for other tokens(to avoid too many access to metadata server)
     contract = new ethers.Contract(config.contract, erc721Abi.abi, signer);
     const prototypeMetadataUri = await contract.tokenURI(config.tokens[0]);
+    console.log(prototypeMetadataUri)
     const metadata = await fetcher.getMetadata(prototypeMetadataUri);
     const protoytypeImageUrl = metadata.image;
     console.log('proto type url fetched:', protoytypeImageUrl);
