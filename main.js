@@ -1,8 +1,7 @@
 import dotenv from 'dotenv';
 import ethers from 'ethers';
-import axios from 'axios';
 import * as utils from './utils/utils.js';
-import * as fetcher from './utils/download.js';
+import * as fetcher from './utils/fetcher.js';
 
 import { createRequire } from "module"; // Bring in the ability to create the 'require' method
 const require = createRequire(import.meta.url); // construct the require method
@@ -14,9 +13,7 @@ const config = {
     name: process.env.NAME,
     endPoint: process.env.END_POINT,
     contract: process.env.CONTRACT_ADDRESS,
-    fetchMode: process.env.FETCH_MODE,
-    tokenCount: utils.isEmpty(process.env.TOKEN_COUNT)?Number.MAX_SAFE_INTEGER:process.env.TOKEN_COUNT,
-    tokenList: process.env.TOKEN_LIST.split(',')
+    tokens: utils.parseTokenStr(process.env.TOKENS??'10'),
 };
 
 
@@ -31,16 +28,12 @@ async function main(){
     //3. Fetching metadatas
     //Genrate the image urls for other tokens(to avoid too many access to metadata server)
     contract = new ethers.Contract(config.contract, erc721Abi.abi, signer);
-    const prototypeMetadataUri = await contract.tokenURI(0);
+    const prototypeMetadataUri = await contract.tokenURI(config.tokens[0]);
     const metadata = await fetcher.getMetadata(prototypeMetadataUri);
     const protoytypeImageUrl = metadata.image;
     console.log('proto type url fetched:', protoytypeImageUrl);
     let urls;
-    if (config.fetchMode === 'ID'){
-        urls = await urlsByIds(config.tokenList, protoytypeImageUrl)
-    } else if (config.fetchMode === 'COUNT'){
-        urls = await urlsByCount(config.tokenCount, protoytypeImageUrl)
-    }
+    urls = await urlsByIds(config.tokens, protoytypeImageUrl)
     console.log('Metadata collected complete');
     //4. Download images.
     Object.keys(urls).forEach(async k=>{
