@@ -30,24 +30,28 @@ async function main(){
     contract = new ethers.Contract(config.contract, erc721Abi.abi, signer);
     const prototypeMetadataUri = await contract.tokenURI(config.tokens[0]);
     console.log(prototypeMetadataUri)
-    const metadata = await fetcher.getMetadata(prototypeMetadataUri);
+    const metadata = await fetcher.fetchMetadata(prototypeMetadataUri);
+    console.log(metadata)
     const protoytypeImageUrl = metadata.image;
     console.log('proto type url fetched:', protoytypeImageUrl);
     let urls;
     urls = await urlsByIds(config.tokens, protoytypeImageUrl)
     console.log('Metadata collected complete');
     //4. Download images.
-    Object.keys(urls).forEach(async k=>{
-        await downloadImage(urls, k);
-    });
+    for (var i=0;i<urls.length;i++){
+        await downloadImage(urls[i]);
+    }
     console.log('Download complete');
 }
 
 async function urlsByIds(tokenList, prototype){
-    let urls = {}
+    let urls = []
     for (var i=0;i<tokenList.length;i++){
         const tokenId = tokenList[i];
-        urls[tokenId] = utils.replace(prototype, tokenId);
+        urls.push({
+            token: tokenId,
+            url: utils.replace(prototype, tokenId)
+        })
     }
     return urls;
 }
@@ -63,14 +67,10 @@ async function urlsByCount(tokenCount, prototype){
     return urls;
 }
 
-async function downloadImage(urls, tokenId){
-    let img = urls[tokenId];
-    if(img.startsWith('http')){
-         fetcher.downloadHttp(tokenId, img, config);
-    } else{
-        
-    }
-
+async function downloadImage(urlInf){
+    const tokenId = urlInf.token;
+    const img = urlInf.url;
+    await fetcher.fetchImage(tokenId, img, config);
 }
 
 
