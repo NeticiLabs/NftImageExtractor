@@ -1,8 +1,4 @@
-ipfs.fleek.co
-ipfs.jbb.one
-ipfs.yt
-hashnews.k1ic.com
-ipfs.drink.cafe
-ipfs.kavin.rocks
-ipfs.denarius.io
-crustwebsites.net
+https://ipfs.io
+https://gateway.ipfs.io
+https://hardbin.com
+https://gateway.pinata.cloud
