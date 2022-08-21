@@ -46,7 +46,7 @@ async function tryUntilSucceed(promiseFn, maxTries=5) {
     }
 }
 
-export {
+export default{
     parseTokenStr,
     isEmpty,
     replace,

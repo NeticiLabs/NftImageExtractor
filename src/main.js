@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import ethers from 'ethers';
-import * as utils from './utils.js';
+import utils from './utils.js';
 import * as fetcher from './fetcher.js';
 
 import { createRequire } from "module"; // Bring in the ability to create the 'require' method
