@@ -1,4 +1,6 @@
 import dotenv from 'dotenv';
+dotenv.config();
+
 import ethers from 'ethers';
 import utils from './utils.js';
 import * as fetcher from './fetcher.js';
@@ -7,13 +9,14 @@ import { createRequire } from "module"; // Bring in the ability to create the 'r
 const require = createRequire(import.meta.url); // construct the require method
 const erc721Abi = require("../abi/Example721.json"); // use the require method
 
-dotenv.config();
+
 
 const config = {
     name: process.env.NAME,
     endPoint: process.env.END_POINT,
     contract: process.env.CONTRACT_ADDRESS,
     tokens: utils.parseTokenStr(process.env.TOKENS??'10'),
+    // proxy: process.env.PROXY
 };
 
 
