@@ -17,15 +17,23 @@ async function get(url, config={}) {
     }
     if (process.env.PROXY_POOL_API){
         try{
+            console.log('start fetch proxy')
             const proxyJson= await axios.get(process.env.PROXY_POOL_API);
             const proxy = proxyJson.data.proxy;
+
+
             config = {
             ...config, 
             proxy: false, // has to be false
             httpsAgent: ProxyAgent(`http://${proxy}`)
-        }
+            }
+
+            // const test = await axios.head(url);
+            // console.log('test result', test.status)
+        
         }catch(err){
-            console.log(err)
+            console.log('error testing proxy:', err.message)
+            config.httpsAgent = undefined
         }
 
 

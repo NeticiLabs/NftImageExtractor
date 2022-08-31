@@ -41,7 +41,7 @@ async function tryUntilSucceed(promiseFn, maxTries=5) {
         if (maxTries > 0) {
             return tryUntilSucceed(promiseFn, maxTries - 1);
         }
-        console.log('retry')
+        console.log('retry failed')
         throw e;
     }
 }
