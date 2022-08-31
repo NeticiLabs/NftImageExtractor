@@ -15,21 +15,23 @@ async function get(url, config={}) {
         ...config,
         headers: headers
     }
-    // if (url.startsWith('https')){
-    //     url = url.slice(0,5)+url.slice(5)
-    // }
     if (process.env.PROXY_POOL_API){
-        const proxyJson= await axios.get(process.env.PROXY_POOL_API);
-        const proxy = proxyJson.data.proxy;
-        config = {
+        try{
+            const proxyJson= await axios.get(process.env.PROXY_POOL_API);
+            const proxy = proxyJson.data.proxy;
+            config = {
             ...config, 
             proxy: false, // has to be false
             httpsAgent: ProxyAgent(`http://${proxy}`)
         }
+        }catch(err){
+            console.log(err)
+        }
+
+
     }
 
-    
-    return utils.tryUntilSucceed(async ()=>{
+    return await utils.tryUntilSucceed(async ()=>{
         return await axios.get(url, config)
     });
 }

@@ -11,7 +11,7 @@ async function get(url, options={}){
             return await http.get(httpUrl, options);
         }
         catch(err){
-            console.log('Try another ipfs gateway');
+            console.log('Try another ipfs gateway due to err :', err.message);
         }
     }
 }
