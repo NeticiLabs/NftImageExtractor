@@ -1,48 +1,30 @@
 
 import utils from '../utils.js';
 import uaPool from 'random-useragent';
-import ProxyAgent from'https-proxy-agent';
+import HttpsProxyAgent from'https-proxy-agent';
+import HttpProxyAgent from'http-proxy-agent';
 import axios from 'axios';
 
-
-
+// 请求拦截器
+axios.interceptors.request.use(async (c) => {
+    c.headers[`user-agent`] = uaPool.getRandom();  
+    c.proxy=false;
+    if (process.env.HTTP_PROXY) {
+      c.httpAgent = await HttpProxyAgent(process.env.HTTP_PROXY)
+    }
+    if (process.env.HTTPS_PROXY) {
+      c.httpsAgent = await HttpsProxyAgent(process.env.HTTPS_PROXY);
+    }
+    return c
+  }, (err) => Promise.reject(err))
 
 async function get(url, config={}) {
-    let headers= {
-        'User-Agent': uaPool.getRandom()
-    };
-    config = {
-        ...config,
-        headers: headers
-    }
-    if (process.env.PROXY_POOL_API){
-        try{
-            console.log('start fetch proxy')
-            const proxyJson= await axios.get(process.env.PROXY_POOL_API);
-            const proxy = proxyJson.data.proxy;
-
-
-            config = {
-            ...config, 
-            proxy: false, // has to be false
-            httpsAgent: ProxyAgent(`http://${proxy}`)
-            }
-
-            // const test = await axios.head(url);
-            // console.log('test result', test.status)
-        
-        }catch(err){
-            console.log('error testing proxy:', err.message)
-            config.httpsAgent = undefined
-        }
-
-
-    }
 
     return await utils.tryUntilSucceed(async ()=>{
         return await axios.get(url, config)
     });
 }
+
 
 
 export {
